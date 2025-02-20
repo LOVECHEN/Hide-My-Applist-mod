@@ -96,7 +96,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         )
 
         runCatching {
-            binding.adBanner.loadAd(AdRequest.Builder().build())
         }
         binding.templateManage.setOnClickListener {
             val extras = FragmentNavigatorExtras(binding.manageCard to "transition_manage")
@@ -126,7 +125,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         lifecycleScope.launch {
-            loadUpdateDialog()
         }
     }
 
@@ -165,14 +163,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private suspend fun loadUpdateDialog() {
-        if (PrefManager.disableUpdate) return
         val updateInfo = fetchLatestUpdate() ?: return
-        if (updateInfo.versionCode > BuildConfig.VERSION_CODE) {
             withContext(Dispatchers.Main) {
                 MaterialAlertDialogBuilder(requireContext())
                     .setCancelable(false)
-                    .setTitle(getString(R.string.home_new_update, updateInfo.versionName))
                     .setMessage(Html.fromHtml(updateInfo.content, Html.FROM_HTML_MODE_COMPACT))
                     .setPositiveButton("GitHub") { _, _ ->
                         startActivity(Intent(Intent.ACTION_VIEW, updateInfo.downloadUrl.toUri()))
@@ -183,11 +177,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     .setNeutralButton(android.R.string.cancel, null)
                     .show()
             }
-        } else if (updateInfo.versionCode > PrefManager.lastVersion) {
             withContext(Dispatchers.Main) {
                 MaterialAlertDialogBuilder(requireContext())
                     .setCancelable(false)
-                    .setTitle(getString(R.string.home_update, updateInfo.versionName))
                     .setMessage(Html.fromHtml(updateInfo.content, Html.FROM_HTML_MODE_COMPACT))
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         PrefManager.lastVersion = BuildConfig.VERSION_CODE

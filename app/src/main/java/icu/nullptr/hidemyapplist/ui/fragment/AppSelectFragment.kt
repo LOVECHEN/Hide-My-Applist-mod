@@ -86,7 +86,6 @@ abstract class AppSelectFragment : Fragment(R.layout.fragment_app_select) {
         )
 
         runCatching {
-            binding.adBanner.loadAd(AdRequest.Builder().build())
         }
         with(binding.toolbar.menu) {
             val searchView = findItem(R.id.menu_search).actionView as SearchView
